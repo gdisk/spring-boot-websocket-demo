@@ -175,10 +175,14 @@
             //关闭事件
             socket.onclose = function () {
                 log("websocket已关闭", which);
+                firstWebSocket = null;
+                secondWebSocket = null;
             };
             //发生了错误事件
             socket.onerror = function () {
                 log("websocket发生了错误", which);
+                firstWebSocket = null;
+                secondWebSocket = null;
             }
             return socket;
         }
