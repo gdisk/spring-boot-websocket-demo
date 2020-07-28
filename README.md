@@ -30,5 +30,6 @@ WebSocket 协议在2008年诞生，2011年成为国际标准。所有支持HTML5
   WebSocket 协议标识符是`ws`，加密的协议标识符为`wss`
   
 ## Springboot整合Websocket
+运行`Application.java`，访问[localhost:8080](localhost:8080)
 整合后示例运行效果如下：
 ![web-demo](https://blog010.oss-cn-beijing.aliyuncs.com/img/20200728151852.gif)
