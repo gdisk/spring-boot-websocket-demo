@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>WebSocket Demo</title>
+    <link rel="stylesheet" href="layui/css/layui.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="layui-container">
+    <div class="layui-row layui-col-space30">
+        <div class="layui-col-md6">
+            <div class="layui-card">
+                <div class="layui-card-header layui-bg-blue">客户端1</div>
+                <div class="layui-card-body" style="background: #c9e8ff;">
+                    <div class="layui-card">
+                        <div class="layui-card-header">发送方</div>
+                        <div class="layui-card-body">
+                            <form class="layui-form" action="">
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label" style="width: 100px;">当前客户端ID</label>
+                                    <div class="layui-input-inline">
+                                        <input id="firstClientId" type="text" name="title" required value="1"
+                                               lay-verify="required" placeholder="请输入当前客户端ID" autocomplete="off" class="layui-input">
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <button id="firstClientOpenBtn" type="button" class="layui-btn">开启WebSocket</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="layui-card">
+                        <div class="layui-card-header">接收方</div>
+                        <div class="layui-card-body">
+                            <form class="layui-form" action="">
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label" style="width: 100px;">接收方客户端ID</label>
+                                    <div class="layui-input-inline">
+                                        <input id="firstClientReceiverId" type="text" name="title" required value="2"
+                                               lay-verify="required" placeholder="请输入接收方客户端ID" autocomplete="off" class="layui-input">
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label" style="width: 100px;">消息内容</label>
+                                    <div class="layui-input-inline">
+                                        <input id="firstClientMsg" type="text" name="title" required value="你好，客户端2"
+                                               lay-verify="required" placeholder="请输入消息内容" autocomplete="off" class="layui-input">
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <button id="firstClientSendBtn" type="button" class="layui-btn">发送消息</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="layui-card">
+                        <div class="layui-card-header">日志</div>
+                        <div class="layui-card-body">
+                            <div id="firstClientResp" class="msg-resp"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="layui-col-md6">
+            <div class="layui-card">
+                <div class="layui-card-header layui-bg-red">客户端2</div>
+                <div class="layui-card-body" style="background: #fde2d9;">
+                    <div class="layui-card">
+                        <div class="layui-card-header">发送方</div>
+                        <div class="layui-card-body">
+                            <form class="layui-form" action="">
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label" style="width: 100px;">当前客户端ID</label>
+                                    <div class="layui-input-inline">
+                                        <input id="secondClientId" type="text" name="title" required value="2"
+                                               lay-verify="required" placeholder="请输入当前客户端ID" autocomplete="off" class="layui-input">
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <button id="secondClientOpenBtn" type="button" class="layui-btn">开启WebSocket</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="layui-card">
+                        <div class="layui-card-header">接收方</div>
+                        <div class="layui-card-body">
+                            <form class="layui-form" action="">
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label" style="width: 100px;">接收方客户端ID</label>
+                                    <div class="layui-input-inline">
+                                        <input id="secondClientReceiverId" type="text" name="title" required value="1"
+                                               lay-verify="required" placeholder="请输入接收方客户端ID" autocomplete="off" class="layui-input">
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <label class="layui-form-label" style="width: 100px;">消息内容</label>
+                                    <div class="layui-input-inline">
+                                        <input id="secondClientMsg" type="text" name="title" required value="你好，客户端1"
+                                               lay-verify="required" placeholder="请输入消息内容" autocomplete="off" class="layui-input">
+                                    </div>
+                                </div>
+                                <div class="layui-form-item">
+                                    <button id="secondClientSendBtn" type="button" class="layui-btn">发送消息</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="layui-card">
+                        <div class="layui-card-header">日志</div>
+                        <div class="layui-card-body">
+                            <div id="secondClientResp" class="msg-resp"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="layui/layui.all.js"></script>
+<script>
+    var layer = layui.layer, $ = layui.$;
+    var firstWebSocket, secondWebSocket;
+    $('#firstClientOpenBtn').click(function () {
+        if (firstWebSocket != null) {
+            firstWebSocket.close();
+            log("客户端断开连接", "first");
+            firstWebSocket = null;
+        }
+        firstWebSocket = openSocket($('#firstClientId').val(), "first");
+    });
+    $('#firstClientSendBtn').click(function () {
+        if (firstWebSocket == null) {
+            log("请先开启WebSocket", "first");
+            return;
+        }
+        sendMessage(firstWebSocket, $('#firstClientReceiverId').val(), $('#firstClientMsg').val(), "first");
+    });
+    $('#secondClientOpenBtn').click(function () {
+        if (secondWebSocket != null) {
+            secondWebSocket.close();
+            log("客户端断开连接", "second")
+            secondWebSocket = null;
+        }
+        secondWebSocket = openSocket($('#secondClientId').val(), "second");
+    });
+    $('#secondClientSendBtn').click(function () {
+        if (secondWebSocket == null) {
+            log("请先开启WebSocket", "second");
+            return;
+        }
+        sendMessage(secondWebSocket, $('#secondClientReceiverId').val(), $('#secondClientMsg').val(), "second");
+    });
+
+
+    function openSocket(clientId, which) {
+        if (typeof (WebSocket) == "undefined") {
+            log("您的浏览器不支持WebSocket", which);
+        } else {
+            //实现化WebSocket对象，指定要连接的服务器地址与端口
+            log("客户端(ID:" + clientId + ")开始建立连接", which);
+            socket = new WebSocket("ws://localhost:8080/ws/" + clientId);
+            //打开事件
+            socket.onopen = function () {
+                log("websocket已打开", which);
+                //socket.send("这是来自客户端的消息" + location.href + new Date());
+            };
+            //获得消息事件
+            socket.onmessage = function (msg) {
+                log(msg.data, which, true);
+            };
+            //关闭事件
+            socket.onclose = function () {
+                log("websocket已关闭", which);
+            };
+            //发生了错误事件
+            socket.onerror = function () {
+                log("websocket发生了错误", which);
+            }
+            return socket;
+        }
+    }
+
+    function sendMessage(webSocket, receiverId, msg, which) {
+        var sendMsg = '{"receiverId":"' + receiverId + '","msg":"' + msg + '"}';
+        log("发送消息：" + sendMsg, which);
+        webSocket.send(sendMsg);
+    }
+
+    function log(msg, which, pop) {
+        if (which) {
+            if (pop) {
+                var color = which == "first" ? '#1e9fff' : '#ff5722';
+                $('#' + which + 'ClientResp').append('<div style="color: '+color+';">接收到消息：' + msg + '</div>');
+                $('#' + which + 'ClientResp').scrollTop($('#' + which + 'ClientResp').prop("scrollHeight"));
+                console.log(client + "日志：接收到消息：" + msg);
+                var offset = which == "first" ? 'lb' : 'rb';
+                try{
+                    msg = JSON.parse(msg);
+                    msg = "<div>发送者ID："+msg.senderId+"</div>" + "<div>消息内容："+msg.msg+"</div>";
+                }catch(e){}
+                layer.open({type: 1,title: '收到服务器消息',content: '<div style="padding: 20px;">' + msg + '</div>',shade: 0,time:2000,area: ['300px','150px'],offset: offset});
+            }else{
+                var client = "客户端" + (which == "first" ? '1' : '2');
+                $('#' + which + 'ClientResp').append('<div>' + msg + '</div>');
+                $('#' + which + 'ClientResp').scrollTop($('#' + which + 'ClientResp').prop("scrollHeight"));
+                console.log(client + "日志：" + msg);
+            }
+        }else{
+            console.log(msg);
+        }
+    }
+</script>
+</body>
+</html>

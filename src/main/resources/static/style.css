@@ -1,0 +1,30 @@
+body {
+    background: #eee;
+}
+
+.layui-form-label {
+    text-align: left;
+    padding-left: 0;
+}
+
+.layui-card-header {
+    font-weight: bold;
+}
+
+.layui-card-body {
+    padding: 5px;
+}
+
+.msg-resp {
+    height: 200px;
+    overflow: auto;
+    border: 1px solid #eee;
+    padding: 5px 5px 5px 10px;
+    color: #777;
+    font-size: 12px;
+}
+
+.layui-layer-title {
+    background: #009688!important;
+    color: #fff!important;
+}
